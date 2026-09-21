@@ -1,14 +1,16 @@
-import { Search, ShoppingBag, Globe } from "lucide-react";
+import { useState } from "react";
+import { Search, ShoppingBag, Globe, X } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { useLanguage } from "../context/LanguageContext";
 
 const Navbar = ({ searchTerm, setSearchTerm, onOpenCart, onGoHome }) => {
   const { totalItems } = useCart();
   const { lang, toggleLanguage, t } = useLanguage();
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   return (
     <header className="fixed top-0 left-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
-      <div className="w-full px-6 sm:px-10 lg:px-12 py-4 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-10 lg:px-12 py-3 flex items-center justify-between gap-2">
         <button
           onClick={onGoHome}
           className="flex items-center gap-2 focus:outline-none cursor-pointer"
@@ -21,19 +23,31 @@ const Navbar = ({ searchTerm, setSearchTerm, onOpenCart, onGoHome }) => {
           </span>
         </button>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <div className="relative">
-            <Search
-              className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 ${lang === "ar" ? "right-3" : "left-3"}`}
-            />
-            <input
-              type="text"
-              placeholder={t("searchPlaceholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className={`${lang === "ar" ? "pr-9 pl-4" : "pl-9 pr-4"} py-2 w-36 sm:w-80 rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all border border-transparent focus:border-indigo-500/30`}
-            />
-          </div>
+        <div className="hidden md:flex flex-1 max-w-md mx-6 relative">
+          <Search
+            className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 ${lang === "ar" ? "right-3" : "left-3"}`}
+          />
+          <input
+            type="text"
+            placeholder={t("searchPlaceholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className={`${lang === "ar" ? "pr-9 pl-4" : "pl-9 pr-4"} py-2 w-full rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all border border-transparent focus:border-indigo-500/30`}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button
+            onClick={() => setIsSearchOpen(!isSearchOpen)}
+            className="md:hidden p-2 text-gray-600 hover:text-indigo-600 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+            aria-label="Toggle Search"
+          >
+            {isSearchOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Search className="w-5 h-5" />
+            )}
+          </button>
 
           <button
             onClick={toggleLanguage}
@@ -57,6 +71,24 @@ const Navbar = ({ searchTerm, setSearchTerm, onOpenCart, onGoHome }) => {
           </button>
         </div>
       </div>
+
+      {isSearchOpen && (
+        <div className="md:hidden px-4 pb-3 pt-1 border-t border-gray-100 bg-white">
+          <div className="relative">
+            <Search
+              className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 ${lang === "ar" ? "right-3" : "left-3"}`}
+            />
+            <input
+              type="text"
+              placeholder={t("searchPlaceholder")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              autoFocus
+              className={`${lang === "ar" ? "pr-9 pl-4" : "pl-9 pr-4"} py-2 w-full rounded-full bg-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:bg-white transition-all border border-gray-200`}
+            />
+          </div>
+        </div>
+      )}
     </header>
   );
 };
